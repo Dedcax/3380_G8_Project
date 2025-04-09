@@ -104,7 +104,7 @@ public class DatabaseLoader {
                 stmt = String.format(stmt, tableName, headers, line);
 
                 // TODO: make database statement/prepared statement (this is temporary)
-                System.out.println(stmt);
+                // System.out.println(stmt);
                 numRows++;
             }
 
