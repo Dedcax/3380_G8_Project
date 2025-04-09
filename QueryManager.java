@@ -6,13 +6,10 @@ public class QueryManager {
     // insatance props
     private Connection connection;
 
-    // class constant
-    private final String url = "jdbc:sqlite:f1.db"; // create databse
-
     // Constructor - establish connection to database
     public QueryManager() {
         try {
-            this.connection = DriverManager.getConnection(url);
+            this.connection = DriverManager.getConnection(DatabaseLoader.DATABASEURL);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }

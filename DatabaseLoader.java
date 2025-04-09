@@ -1,11 +1,23 @@
-// TODO: implement this
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class DatabaseLoader {
 
-    /**
-     * Load dataset into database
-     */
+    // insatance props
+    private Connection connection;
+
+    // class constant
+    public static final String DATABASEURL = "jdbc:sqlite:f1.db"; // create databse
+
+    // Constructor - establish connection to database
     public DatabaseLoader() {
-        System.out.println("loading in data...");
+        try {
+            this.connection = DriverManager.getConnection(DATABASEURL);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /**
@@ -15,7 +27,13 @@ public class DatabaseLoader {
      * @return
      */
     public static void LoadData() {
-        new DatabaseLoader();
+        System.out.println("loading in data...");
+        DatabaseLoader databaseLoader = new DatabaseLoader();
+        databaseLoader.loadData();
+    }
+
+    // TODO: implement this
+    private void loadData() {
     }
 
 }
