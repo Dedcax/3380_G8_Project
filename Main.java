@@ -1,11 +1,11 @@
 
 public class Main {
     public static void main(String[] args) {
-        // TODO: load in data
+        // load dataset into database
+        DatabaseLoader.LoadData();
 
-        // TODO: better welcome message
         // welcome message
-        System.out.println("Welcome to our F1 Database CLI Program");
+        System.out.println("Welcome to our F1 Database CLI Program.");
 
         // Class for collecting user inputs
         InputHandler inputHandler = new InputHandler();
