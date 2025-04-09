@@ -1,0 +1,20 @@
+# Compiled class files
+*.class
+
+# database files
+*.db
+
+# Eclipse specific
+.project
+.classpath
+.settings/
+bin/
+tmp/
+
+# IntelliJ IDEA specific
+*.iml
+.idea/
+out/
+
+# VS Code
+.vscode/
