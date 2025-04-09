@@ -24,15 +24,16 @@ public class InputHandler {
     public String[] getUserInput() {
         System.out.print("Please enter a command, 'h' for HELP or 'q' to QUIT -> ");
 
-        String[] res = new String[2];
+        String[] result = new String[2];
 
-        // TODO: fix this implementation
-        int count = 0;
-        while (this.scanner.hasNext()) {
-            res[count++] = this.scanner.next();
+        // read the next line and split it on the spaces
+        if (this.scanner.hasNextLine()) {
+            String[] temp = (this.scanner.nextLine().trim()).split(" ");
+            result[COMMAND] = temp[COMMAND];
+            result[VARIABLE] = temp.length == 2 ? temp[VARIABLE] : "";
         }
 
-        return res;
+        return result;
     }
 
 }
