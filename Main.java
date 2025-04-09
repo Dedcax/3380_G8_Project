@@ -7,10 +7,22 @@ public class Main {
         // welcome message
         System.out.println("Welcome to our F1 Database CLI Program");
 
-        // main program loop
+        // Class for collecting user inputs
         InputHandler inputHandler = new InputHandler();
-        while (inputHandler.handleInput()) {
+
+        // class for responding to user inputs
+        QueryManager queryManager = new QueryManager();
+
+        // read first input
+        String[] input = inputHandler.getUserInput();
+
+        // respond to user and loop while the user does not enter the quit command
+        while (queryManager.handleInput(input)) {
+
+            // loop condition
+            input = inputHandler.getUserInput();
         }
 
     }
+
 }
