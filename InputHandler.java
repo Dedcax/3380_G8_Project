@@ -21,47 +21,15 @@ public class InputHandler {
      * 
      * @return [command, variable] as a string array
      */
-    private String[] getUserInput() {
+    public String[] getUserInput() {
+        System.out.print("Please enter a command, 'h' for HELP or 'q' to QUIT -> ");
+
         String[] res = new String[2];
 
+        // TODO: fix this implementation
         int count = 0;
         while (this.scanner.hasNext()) {
-            res[count] = this.scanner.next();
-            count++;
-        }
-
-        return res;
-    }
-
-    /**
-     * Collects user input using the scanner object and responds to the command
-     * appropriately.
-     * Generates error messages to keep users informed.
-     * 
-     * @return true to keep the program running, false to quit
-     */
-    public boolean handleInput() {
-        System.out.print("Please enter a command, 'h' for HELP or 'q' to QUIT -> "); // user prompt
-
-        // get user input and store it
-        String[] input = getUserInput();
-        String command = input[COMMAND];
-        String variable = input[VARIABLE];
-        boolean res;
-
-        // respond to user input
-        if (command.length() < 1) {
-            System.out.println("\nPlease enter valid command");
-            res = true;
-        } else if (command.equals("q")) {
-            System.out.println("Thank you for using our program.");
-            res = false;
-        } else if (command.equals("h")) {
-            System.out.println("Welcome to the Help page");
-            res = false;
-        } else {
-            System.out.println("Please enter valid command");
-            res = true;
+            res[count++] = this.scanner.next();
         }
 
         return res;

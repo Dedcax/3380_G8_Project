@@ -4,9 +4,15 @@ run: Main
 InputHandler.class: 
 	javac InputHandler.java
 
-Main: InputHandler.class
+# compile query manger 
+QueryManager.class:
+	javac QueryManager.java
+
+# main file loop
+Main: InputHandler.class QueryManager.class
 	javac Main.java
-	java Main
+	java -cp ".;sqlite-jdbc-3.39.3.0.jar" Main
+
 
 # remove all .class files from porject
 clean:
