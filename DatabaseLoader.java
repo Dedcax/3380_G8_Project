@@ -1,116 +1,97 @@
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
-import java.io.*;
+import java.util.Properties;
 
 public class DatabaseLoader {
 
-    // insatance props
     private Connection connection;
-    private Scanner scanner;
 
-    // class props
-    private static int numRows = 0; // total number of rows added to the database
+    private static final String FILENAME = "f1.sql"; // create databse
 
-    // class constant
-    public static final String DATABASEURL = "jdbc:sqlite:f1.db"; // create databse
-    private static final String PREFIX = "dataset/"; // create databse
+    public static void main(String[] args) {
+        DatabaseLoader dataLoader = new DatabaseLoader();
+        dataLoader.loadData();
+    }
 
-    // Constructor - establish connection to database
     public DatabaseLoader() {
+        Properties prop = new Properties();
+        String fileName = "auth.cfg";
         try {
-            this.connection = DriverManager.getConnection(DATABASEURL);
+            FileInputStream configFile = new FileInputStream(fileName);
+            prop.load(configFile);
+            configFile.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Could not find config file.");
+            System.exit(1);
+        } catch (IOException ex) {
+            System.out.println("Error reading config file.");
+            System.exit(1);
+        }
+        String username = (prop.getProperty("username"));
+        String password = (prop.getProperty("password"));
 
-            // enable foreign keys
-            Statement stmt = this.connection.createStatement();
-            stmt.execute("PRAGMA foreign_keys = ON");
-            stmt.close();
+        if (username == null || password == null) {
+            System.out.println("Username or password not provided.");
+            System.exit(1);
+        }
+
+        String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
+                + "database=cs3380;"
+                + "user=" + username + ";"
+                + "password=" + password + ";"
+                + "encrypt=false;"
+                + "trustServerCertificate=false;"
+                + "loginTimeout=30;";
+
+        try {
+            this.connection = DriverManager.getConnection(connectionUrl);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-
     }
 
-    /**
-     * Factory method for DatabaseLoader class. creates a new instance of the class,
-     * loading the dataset into the database
-     * 
-     * @return
-     */
-    public static void LoadData() {
-        System.out.println("loading in data...");
-        DatabaseLoader databaseLoader = new DatabaseLoader();
-
-        // TODO: create tables before inserting
-        databaseLoader.loadDataHelper();
-        System.out.println(String.format("%d total rows added.", numRows));
-    }
-
-    /**
-     * Helper function that loads all the tables from the dataset csv files
-     */
-    private void loadDataHelper() {
-        loadDrivers();
-        loadConstructors();
-        loadCircuits();
-        // TODO: add the other functions
-    }
-
-    /*
-     * Loads the driver.csv file as the driver table
-     */
-    private void loadDrivers() {
-        this.loadData("drivers.csv", "drivers");
-    }
-
-    /**
-     * Loads the constructor.csv file as the constructor table
-     */
-    private void loadConstructors() {
-        this.loadData("constructors.csv", "constructors");
-    }
-
-    /**
-     * Loads the circuit.csv file as the circuit table
-     */
-    private void loadCircuits() {
-        this.loadData("circuits.csv", "circuits");
-    }
-
-    /**
-     * Generic insert function. Inserts data from a csv file into a table. header
-     * row values are used as table columns.
-     * 
-     * @param fileName  name of csv file
-     * @param tableName name of table to insert data into
-     */
-    private void loadData(String fileName, String tableName) {
-        String stmt = "INSERT INTO %S (%S) VALUES (%S);"; // generic import statement
-        String headers;
-        String line;
+    public void loadData() {
         try {
-            // open the file with the given fileName
-            scanner = new Scanner(new File(PREFIX + fileName));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(FILENAME)));
 
-            // read the headers
-            headers = scanner.hasNextLine() ? scanner.nextLine().trim() : "";
+            String query = ""; // stores string for query
+            String line;
 
             // read all lines, inserting as the loop iterates
-            while (headers.length() > 0 && scanner.hasNextLine()) {
-                line = scanner.nextLine().trim();
-                stmt = String.format(stmt, tableName, headers, line);
+            while ((line = reader.readLine()) != null) {
+                // clean up
+                line = line.trim();
 
-                // TODO: make database statement/prepared statement (this is temporary)
-                // System.out.println(stmt);
-                numRows++;
+                // add to string store
+                query += line;
+
+                if (line.length() > 0 && line.charAt(line.length() - 1) == ';') {
+                    Statement statement = this.connection.createStatement();
+                    statement.executeQuery(query);
+                    System.out.println(query);
+                    query = "";
+                }
             }
 
-            // close scanner
-            scanner.close();
+            // close stream
+            reader.close();
+        } catch (NullPointerException e) {
+            System.err.println(e.getMessage());
         } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
 
