@@ -126,9 +126,9 @@ public class QueryManager {
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            String fmt = "|%25s| %25s| %15s| %25s| %5s| %5s| %25s|";
+            String fmt = "| %5s| %25s| %25s| %15s| %25s| %5s| %5s| %25s|";
 
-            String header = String.format(fmt, "First Name", "Last Name", "DOB", "Nickname",
+            String header = String.format(fmt, "Id", "First Name", "Last Name", "DOB", "Nickname",
                     "Number",
                     "Code", "Nationality");
 
@@ -139,6 +139,7 @@ public class QueryManager {
             printHorDivider(header);
 
             while (result.next()) {
+                String driverId = result.getString("driverId");
                 String driverRef = result.getString("driverRef");
                 String driverNumber = result.getString("driverNumber");
                 String code = result.getString("code");
@@ -148,7 +149,8 @@ public class QueryManager {
                 String nationality = result.getString("nationality");
 
                 System.out.println(
-                        String.format(fmt, forename, surname, dob, driverRef, driverNumber, code, nationality));
+                        String.format(fmt, driverId, forename, surname, dob, driverRef, driverNumber, code,
+                                nationality));
 
             }
 
@@ -172,7 +174,7 @@ public class QueryManager {
             ResultSet result = statement.executeQuery(query);
             String fmt = "| %5s| %25s| %25s|";
 
-            String header = String.format(fmt, "Name", "Nationality");
+            String header = String.format(fmt, "Id", "Name", "Nationality");
 
             printHorDivider(header);
 
@@ -208,9 +210,9 @@ public class QueryManager {
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            String fmt = "|%5s| %25s| %25s| %25s| %5s| %25s| %25s|";
+            String fmt = "|%5s| %25s| %25s| %25s| %7s| %25s| %25s|";
 
-            String header = String.format(fmt, "id", "Name", "Year", "Round", "circuitId", "CircuitId", "Date");
+            String header = String.format(fmt, "id", "Name", "Year", "Round", "cirId", "CircuitId", "Date");
 
             printHorDivider(header);
 
@@ -228,7 +230,7 @@ public class QueryManager {
                 String circuitId = result.getString("circuitId");
 
                 System.out.println(
-                        String.format(fmt, raceId, raceName, raceYear, round, circName, raceDate));
+                        String.format(fmt, raceId, raceName, raceYear, round, circuitId, circName, raceDate));
 
             }
 
@@ -247,7 +249,7 @@ public class QueryManager {
     private void teamDrivers(String constructorId) {
         if (!constructorId.equals("")) {
 
-            System.out.println("Getting drivers and their constructors...");
+            System.out.println("Getting drivers for Id:" + constructorId + " constructor...");
 
             String query = "SELECT DISTINCT forename, surname"
                     + " FROM results INNER JOIN drivers"
@@ -287,16 +289,56 @@ public class QueryManager {
             }
 
         } else {
-            System.out.println("Enter a valid team name (team_drivers <teamName>)");
+            System.out.println("Enter a valid constructorId (team_drivers <constructorId>)");
         }
     }
 
-    // TODO: implement query
-    private void driverTeams(String driverName) {
-        if (!driverName.equals("")) {
-            System.out.println("driver_teams");
+    /**
+     * Get a list of constructors a driver has driven for
+     * 
+     * @param driverId for driver
+     */
+    private void driverTeams(String driverId) {
+        if (!driverId.equals("")) {
+            System.out.println("Getting constructors that driverId:" + driverId + " drove for...");
+
+            String query = "SELECT DISTINCT constructorName"
+                    + " FROM results INNER JOIN constructors"
+                    + " ON (results.constructorId = Constructors.constructorId)"
+                    + " WHERE driverId = ?;";
+
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, Integer.parseInt(driverId));
+                ResultSet result = statement.executeQuery(query);
+
+                String fmt = "|%25s|";
+
+                String header = String.format(fmt, "Constructor Name");
+
+                printHorDivider(header);
+
+                System.out.println(header);
+
+                printHorDivider(header);
+
+                while (result.next()) {
+                    String constructorName = result.getString("constructorName");
+
+                    System.out.println(
+                            String.format(fmt, constructorName));
+
+                }
+
+                printHorDivider(header);
+
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
         } else {
-            System.out.println("Enter a valid driver name (driver_teams <driverName>)");
+            System.out.println("Enter a valid driverId (driver_teams <driverId>)");
         }
     }
 
@@ -337,8 +379,8 @@ public class QueryManager {
         System.out.println("1.  drivers                           - Lists all drivers in the database.");
         System.out.println("2.  constructors                      - Lists all constructors (teams) in the database.");
         System.out.println("3.  races                             - Lists all races in the database.");
-        System.out.println("4.  team_drivers <team_name>          - Lists all drivers for a given team.");
-        System.out.println("5.  driver_teams <driver_name>        - Lists all teams a given driver has driven.");
+        System.out.println("4.  team_drivers <constructorId>          - Lists all drivers for a given team.");
+        System.out.println("5.  driver_teams <driverId>        - Lists all teams a given driver has driven.");
         System.out.println("6.  circuits                          - Lists all race circuits in the database.");
         System.out.println(
                 "7.  fastest_lap <driver_name>         - Displays the fastest lap times for a given driver.");
