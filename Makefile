@@ -1,4 +1,4 @@
-run: Main
+build: Main.class
 
 # compile InputHandler
 InputHandler.class: 
@@ -13,11 +13,16 @@ DatabaseLoader.class:
 	javac DatabaseLoader.java
 
 # main file loop
-Main: InputHandler.class QueryManager.class DatabaseLoader.class
+Main.class: InputHandler.class QueryManager.class DatabaseLoader.class
 	javac Main.java
+
+# executable
+Main: Main.class
 	java -cp ".;sqlite-jdbc-3.39.3.0.jar" Main
 
+# command to run the application
+run: Main
 
 # remove all .class & .db files from porject
 clean:
-	rm *.class *.db
+	rm *.class
