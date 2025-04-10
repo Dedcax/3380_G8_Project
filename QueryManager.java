@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -115,10 +116,6 @@ public class QueryManager {
 
     }
 
-    private void printHorDivider(String header) {
-        System.out.println(String.format("%0" + header.length() + "d", 0).replace("0", "="));
-    }
-
     /**
      * Prints the list of all the drivers
      */
@@ -163,7 +160,9 @@ public class QueryManager {
 
     }
 
-    // TODO: implement query
+    /**
+     * list of all constructors
+     */
     private void constructors() {
         System.out.println("Getting constructors...");
         String query = "SELECT DISTINCT * FROM constructors;";
@@ -171,7 +170,7 @@ public class QueryManager {
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            String fmt = "|%25s| %25s|";
+            String fmt = "| %5s| %25s| %25s|";
 
             String header = String.format(fmt, "Name", "Nationality");
 
@@ -182,11 +181,12 @@ public class QueryManager {
             printHorDivider(header);
 
             while (result.next()) {
+                String constructorId = result.getString("constructorId");
                 String constructorName = result.getString("constructorName");
                 String nationality = result.getString("nationality");
 
                 System.out.println(
-                        String.format(fmt, constructorName, nationality));
+                        String.format(fmt, constructorId, constructorName, nationality));
 
             }
 
@@ -197,18 +197,20 @@ public class QueryManager {
         }
     }
 
-    // TODO: implement query
+    /**
+     * Get a list of all the race data
+     */
     private void races() {
         System.out.println("Getting races...");
-        String query = "SELECT raceId,raceYear,round,circuits.circuitName as circName,raceName,raceDate"
+        String query = "SELECT raceId,raceYear,round,circuitsId,circuits.circuitName as circName,raceName,raceDate"
                 + " FROM races INNER JOIN circuits on (races.circuitId = circuits.circuitId);";
 
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            String fmt = "|%25s| %25s| %25s| %25s| %25s| %25s|";
+            String fmt = "|%5s| %25s| %25s| %25s| %5s| %25s| %25s|";
 
-            String header = String.format(fmt, "id", "Name", "Year", "Round", "CircuitId", "Date");
+            String header = String.format(fmt, "id", "Name", "Year", "Round", "circuitId", "CircuitId", "Date");
 
             printHorDivider(header);
 
@@ -223,6 +225,7 @@ public class QueryManager {
                 String circName = result.getString("circName");
                 String raceName = result.getString("raceName");
                 String raceDate = result.getString("raceDate");
+                String circuitId = result.getString("circuitId");
 
                 System.out.println(
                         String.format(fmt, raceId, raceName, raceYear, round, circName, raceDate));
@@ -236,10 +239,53 @@ public class QueryManager {
         }
     }
 
-    // TODO: implement query
-    private void teamDrivers(String teamName) {
-        if (!teamName.equals("")) {
-            System.out.println("team_drivers");
+    /**
+     * Get drivers for a certain team with contructorId
+     * 
+     * @param constructorId constructor to get drivers for
+     */
+    private void teamDrivers(String constructorId) {
+        if (!constructorId.equals("")) {
+
+            System.out.println("Getting drivers and their constructors...");
+
+            String query = "SELECT DISTINCT forename, surname"
+                    + " FROM results INNER JOIN drivers"
+                    + " ON (results.driverId = drivers.driverId)"
+                    + " WHERE constructorId = ?;";
+
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, Integer.parseInt(constructorId));
+                ResultSet result = statement.executeQuery(query);
+
+                String fmt = "|%25s| %25s|";
+
+                String header = String.format(fmt, "First Name", "Last Name");
+
+                printHorDivider(header);
+
+                System.out.println(header);
+
+                printHorDivider(header);
+
+                while (result.next()) {
+                    String forename = result.getString("forename");
+                    String surname = result.getString("surname");
+
+                    System.out.println(
+                            String.format(fmt, forename, surname));
+
+                }
+
+                printHorDivider(header);
+
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
+
         } else {
             System.out.println("Enter a valid team name (team_drivers <teamName>)");
         }
@@ -302,6 +348,15 @@ public class QueryManager {
                 "9.  search_driver <partial_name>      - Searches for a driver by a partial name.");
         System.out.println(
                 "\nNote: commnands are in the format - COMMAND <VARIABLE>. Variables are only required for selected commands, see above.\n");
+    }
+
+    /**
+     * Generates row divider
+     * 
+     * @param header header for table
+     */
+    private void printHorDivider(String header) {
+        System.out.println(String.format("%0" + header.length() + "d", 0).replace("0", "="));
     }
 
 }
