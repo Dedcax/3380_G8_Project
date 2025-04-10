@@ -18,7 +18,10 @@ public class DatabaseLoader {
 
     public static void main(String[] args) {
         DatabaseLoader dataLoader = new DatabaseLoader();
-        dataLoader.loadData();
+        if (!dataLoader.loadData()) {
+            System.out.println("Unable to load Database");
+            System.exit(1);
+        }
     }
 
     public DatabaseLoader() {
@@ -58,7 +61,9 @@ public class DatabaseLoader {
         }
     }
 
-    public void loadData() {
+    public boolean loadData() {
+        System.out.println("Loading Database...");
+        boolean result = false;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(new File(FILENAME)));
 
@@ -75,14 +80,15 @@ public class DatabaseLoader {
 
                 if (line.length() > 0 && line.charAt(line.length() - 1) == ';') {
                     Statement statement = this.connection.createStatement();
-                    statement.executeQuery(query);
-                    System.out.println(query);
+                    statement.execute(query);
+                    // System.out.println(query);
                     query = "";
                 }
             }
 
             // close stream
             reader.close();
+            result = true;
         } catch (NullPointerException e) {
             System.err.println(e.getMessage());
         } catch (FileNotFoundException e) {
@@ -95,6 +101,8 @@ public class DatabaseLoader {
             System.err.println(e.getMessage());
         }
 
+        System.out.println("Finished loading Database...");
+        return result;
     }
 
 }
