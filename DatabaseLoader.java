@@ -17,7 +17,6 @@ public class DatabaseLoader {
     private static final String FILENAME = "f1.sql"; // create databse
 
     public static void main(String[] args) {
-        System.out.println("Loading database...");
         DatabaseLoader dataLoader = new DatabaseLoader();
         if (!dataLoader.loadData()) {
             System.out.println("Unable to load Database");
