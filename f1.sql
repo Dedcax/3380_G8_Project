@@ -182,3 +182,19 @@ CREATE TABLE StatusCodes (
     statusId INT PRIMARY KEY,
     status VARCHAR(100)
 );
+
+--bulk insert data from CSV files into database
+BULK INSERT Circuits FROM 'dataset\circuits.csv';
+BULK INSERT Races FROM 'dataset\races.csv';
+BULK INSERT Drivers FROM 'dataset\drivers.csv';
+BULK INSERT Constructors FROM 'dataset\constructors.csv';
+BULK INSERT ConstructorResults FROM 'dataset\constructor_results.csv';
+BULK INSERT ConstructorStandings FROM 'dataset\constructor_standings.csv';
+BULK INSERT DriverStandings FROM 'dataset\driver_standings.csv';
+BULK INSERT LapTimes FROM 'dataset\lap_times.csv';
+BULK INSERT PitStops FROM 'dataset\pit_stops.csv';
+BULK INSERT Qualifying FROM 'dataset\qualifying.csv';
+BULK INSERT Results FROM 'dataset\results.csv';
+BULK INSERT SprintResults FROM 'dataset\sprint_results.csv';
+BULK INSERT StatusCodes FROM 'dataset\status.csv';
+
