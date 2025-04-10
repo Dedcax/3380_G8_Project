@@ -165,7 +165,36 @@ public class QueryManager {
 
     // TODO: implement query
     private void constructors() {
-        System.out.println("constructors");
+        System.out.println("Getting constructors...");
+        String query = "SELECT DISTINCT * FROM constructors;";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+            String fmt = "|%25s| %25s|";
+
+            String header = String.format(fmt, "Name", "Nationality");
+
+            printHorDivider(header);
+
+            System.out.println(header);
+
+            printHorDivider(header);
+
+            while (result.next()) {
+                String constructorName = result.getString("constructorName");
+                String nationality = result.getString("nationality");
+
+                System.out.println(
+                        String.format(fmt, constructorName, nationality));
+
+            }
+
+            printHorDivider(header);
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     // TODO: implement query
