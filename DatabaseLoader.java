@@ -80,10 +80,10 @@ public class DatabaseLoader {
                 line = line.trim();
 
                 i++;
-                if(i == 10000){
+                if (i == 10000) {
                     i = 0;
-                    System.out.println("Uploaded 10k lines - "+y);
-                    y++
+                    System.out.println("Uploaded 10k lines - " + y);
+                    y++;
                 }
                 // add to string store
                 query += line;
