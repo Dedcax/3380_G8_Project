@@ -72,11 +72,19 @@ public class DatabaseLoader {
             String query = ""; // stores string for query
             String line;
 
+            int i = 0;
+            int y = 0;
             // read all lines, inserting as the loop iterates
             while ((line = reader.readLine()) != null) {
                 // clean up
                 line = line.trim();
 
+                i++;
+                if(i == 10000){
+                    i = 0;
+                    System.out.println("Uploaded 10k lines - "+y);
+                    y++
+                }
                 // add to string store
                 query += line;
 
