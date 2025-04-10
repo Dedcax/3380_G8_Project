@@ -143,9 +143,9 @@ public class DatabaseLoadTool {
             temp[i] = strArr[i];
         }
 
-        temp[6] = strArr.length > 6 ? addSingleQuote(formatTime(temp[6])) : null;
-        temp[7] = strArr.length > 7 ? addSingleQuote(formatTime(temp[7])) : null;
-        temp[8] = strArr.length > 8 ? addSingleQuote(formatTime(temp[8])) : null;
+        temp[6] = strArr.length > 6 ? addSingleQuote(convertTime(formatTime(temp[6]))) : null;
+        temp[7] = strArr.length > 7 ? addSingleQuote(convertTime(formatTime(temp[7]))) : null;
+        temp[8] = strArr.length > 8 ? addSingleQuote(convertTime(formatTime(temp[8]))) : null;
 
         return String.join(", ", temp);
     }
@@ -294,6 +294,16 @@ public class DatabaseLoadTool {
             test[i] = test[i].trim().length() == 0 ? null : test[i].trim();
         }
         return test;
+    }
+
+    /**
+     * converts times from HH:MM.SS to HH:MM:SS
+     * 
+     * @param str time to convert
+     * @return formated string
+     */
+    private String convertTime(String str) {
+        return str.replace(".", ":");
     }
 
 }
