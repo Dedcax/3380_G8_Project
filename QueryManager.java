@@ -1,6 +1,12 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
 public class QueryManager {
     // insatance props
@@ -8,12 +14,40 @@ public class QueryManager {
 
     // Constructor - establish connection to database
     public QueryManager() {
-        // try {
-        // this.connection = DriverManager.getConnection(DatabaseLoader.DATABASEURL);
-        // } catch (SQLException e) {
-        // System.err.println(e.getMessage());
-        // }
+        Properties prop = new Properties();
+        String fileName = "auth.cfg";
+        try {
+            FileInputStream configFile = new FileInputStream(fileName);
+            prop.load(configFile);
+            configFile.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Could not find config file.");
+            System.exit(1);
+        } catch (IOException ex) {
+            System.out.println("Error reading config file.");
+            System.exit(1);
+        }
+        String username = (prop.getProperty("username"));
+        String password = (prop.getProperty("password"));
 
+        if (username == null || password == null) {
+            System.out.println("Username or password not provided.");
+            System.exit(1);
+        }
+
+        String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
+                + "database=cs3380;"
+                + "user=" + username + ";"
+                + "password=" + password + ";"
+                + "encrypt=false;"
+                + "trustServerCertificate=false;"
+                + "loginTimeout=30;";
+
+        try {
+            this.connection = DriverManager.getConnection(connectionUrl);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     /**
@@ -81,9 +115,52 @@ public class QueryManager {
 
     }
 
-    // TODO: implement query
+    private void printHorDivider(String header) {
+        System.out.println(String.format("%0" + header.length() + "d", 0).replace("0", "="));
+    }
+
+    /**
+     * Prints the list of all the drivers
+     */
     private void drivers() {
-        System.out.println("drivers");
+        System.out.println("Getting drivers...");
+        String query = "SELECT DISTINCT * FROM drivers;";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+            String fmt = "|%25s| %25s| %15s| %25s| %5s| %5s| %25s|";
+
+            String header = String.format(fmt, "First Name", "Last Name", "DOB", "Nickname",
+                    "Number",
+                    "Code", "Nationality");
+
+            printHorDivider(header);
+
+            System.out.println(header);
+
+            printHorDivider(header);
+
+            while (result.next()) {
+                String driverRef = result.getString("driverRef");
+                String driverNumber = result.getString("driverNumber");
+                String code = result.getString("code");
+                String forename = result.getString("forename");
+                String surname = result.getString("surname");
+                String dob = result.getString("dob");
+                String nationality = result.getString("nationality");
+
+                System.out.println(
+                        String.format(fmt, forename, surname, dob, driverRef, driverNumber, code, nationality));
+
+            }
+
+            printHorDivider(header);
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
     }
 
     // TODO: implement query
