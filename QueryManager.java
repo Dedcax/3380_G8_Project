@@ -342,9 +342,51 @@ public class QueryManager {
         }
     }
 
-    // TODO: implement query
+    /**
+     * Most used circuits
+     */
     private void circuits() {
-        System.out.println("circuits");
+        System.out.println("Getting the most used circuits...");
+
+        String query = "SELECT circuitName, circuitLocation, circuits.circuitId, count(races.circuitId) as times_raced"
+                + " FROM circuits LEFT JOIN races"
+                + " ON (Circuits.circuitId = races.circuitId)"
+                + " WHERE circuits.circuitId=races.circuitId"
+                + " GROUP BY circuits.circuitId, circuitName, circuitLocation"
+                + " ORDER BY count(races.circuitId) DESC;";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+
+            String fmt = "| %5s| %25s| %25s| %6s|";
+
+            String header = String.format(fmt, "Id", "Name", "Location", "Num. Used");
+
+            printHorDivider(header);
+
+            System.out.println(header);
+
+            printHorDivider(header);
+
+            while (result.next()) {
+                String circuitName = result.getString("circuitName");
+                String circuitLocation = result.getString("circuitLocation");
+                String circId = result.getString("circuits.circuitId");
+                String teamRaced = result.getString("times_raced");
+
+                System.out.println(
+                        String.format(fmt, circId, circuitName, circuitLocation, teamRaced));
+
+            }
+
+            printHorDivider(header);
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     // TODO: implement query
