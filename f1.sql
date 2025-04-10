@@ -16,7 +16,7 @@ CREATE TABLE Circuits (
 
 CREATE TABLE Races (
     raceId INT PRIMARY KEY,
-    circuitId INT, --TODO: maybe remove this
+    -- circuitId INT, --TODO: maybe remove this
     year INT,
     round INT,
     raceName VARCHAR(255),
@@ -87,11 +87,11 @@ CREATE TABLE DriverStandings (
 CREATE TABLE LapTimes (
     raceId INT,
     driverId INT,
-    lap INT, --TODO: maybe key
+    lap INT,
     position INT,
     time VARCHAR(20),
     lapMilliseconds INT,
-    PRIMARY KEY (raceId, driverId),
+    PRIMARY KEY (raceId, driverId, lap),
     FOREIGN KEY (raceId) REFERENCES Races(raceId),
     FOREIGN KEY (driverId) REFERENCES Drivers(driverId)
 );
@@ -99,12 +99,12 @@ CREATE TABLE LapTimes (
 CREATE TABLE PitStops (
     raceId INT,
     driverId INT,
-    stop INT, --TODO: maybe add another key
+    stop INT,
     lap INT,
     stopTime TIME,
     duration VARCHAR(20),
     stopMilliseconds INT,
-    PRIMARY KEY (raceId, driverId),
+    PRIMARY KEY (raceId, driverId, stop),
     FOREIGN KEY (raceId) REFERENCES Races(raceId),
     FOREIGN KEY (driverId) REFERENCES Drivers(driverId)
 );
