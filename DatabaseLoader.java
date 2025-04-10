@@ -73,7 +73,7 @@ public class DatabaseLoader {
             String line;
 
             int i = 0;
-            int y = 0;
+            int y = 1;
             // read all lines, inserting as the loop iterates
             while ((line = reader.readLine()) != null) {
                 // clean up
