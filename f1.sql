@@ -3,11 +3,26 @@
 
 use cs3380;
 
+-- clean up
+drop table if exists Circuits;
+drop table if exists Races;
+drop table if exists Drivers;
+drop table if exists Constructors;
+drop table if exists ConstructorResults;
+drop table if exists ConstructorStandings;
+drop table if exists DriverStandings;
+drop table if exists LapTimes;
+drop table if exists PitStops;
+drop table if exists Qualifying;
+drop table if exists Results;
+drop table if exists SprintResults;
+drop table if exists StatusCodes;
+
 CREATE TABLE Circuits (
     circuitId INT PRIMARY KEY,
     circuitRef VARCHAR(100),
-    name VARCHAR(255),
-    location VARCHAR(255),
+    circuitName VARCHAR(255),
+    circuitLocation VARCHAR(255),
     country VARCHAR(100),
     lat FLOAT,
     lng FLOAT,
@@ -16,12 +31,12 @@ CREATE TABLE Circuits (
 
 CREATE TABLE Races (
     raceId INT PRIMARY KEY,
-    -- circuitId INT, --TODO: maybe remove this
-    year INT,
+    raceYear INT,
     round INT,
+    circuitId INT,   
     raceName VARCHAR(255),
-    date DATE,
-    time TIME,
+    raceDate DATE,
+    raceTime TIME,
     fp1_date DATE,
     fp1_time TIME,
     fp2_date DATE,
@@ -52,22 +67,15 @@ CREATE TABLE Constructors (
     nationality VARCHAR(100)
 );
 
-CREATE TABLE Host (
-    raceId INT PRIMARY KEY REFERENCES Races(raceId),
-    circuitId INT REFERENCES Circuits(circuitId),
-);
-
-
 CREATE TABLE ConstructorResults (
     constructorResultsId INT PRIMARY KEY,
     raceId INT REFERENCES Races(raceId),
     constructorId INT REFERENCES Constructors(constructorId),
     points INT,
-    statusID INT REFERENCES Status(statusId)
 );
 
 CREATE TABLE ConstructorStandings (
-    ConstructorStandingsId INT PRIMARY KEY,
+    constructorStandingsId INT PRIMARY KEY,
     raceId INT REFERENCES Races(raceId),
     constructorId INT REFERENCES Constructors(constructorId),
     points INT,
@@ -89,7 +97,7 @@ CREATE TABLE LapTimes (
     driverId INT,
     lap INT,
     position INT,
-    time VARCHAR(20),
+    lapTime VARCHAR(20),
     lapMilliseconds INT,
     PRIMARY KEY (raceId, driverId, lap),
     FOREIGN KEY (raceId) REFERENCES Races(raceId),
@@ -99,7 +107,7 @@ CREATE TABLE LapTimes (
 CREATE TABLE PitStops (
     raceId INT,
     driverId INT,
-    stop INT,
+    stopNumber INT,
     lap INT,
     stopTime TIME,
     duration VARCHAR(20),
@@ -129,19 +137,19 @@ CREATE TABLE Results (
     raceId INT,
     driverId INT,
     constructorId INT,
-    statusId INT,
-    number INT,
+    raceNumber INT,
     grid INT,
     position INT,
     positionOrder INT,
     points INT,
     laps INT,
-    time VARCHAR(30),
+    resultTime VARCHAR(30),
     milliseconds INT,
     fastestLap INT,
     rank INT,
     fastestLapTime VARCHAR(20),
     fastestLapSpeed VARCHAR(20),
+    statusId INT,
     FOREIGN KEY (raceId) REFERENCES Races(raceId),
     FOREIGN KEY (driverId) REFERENCES Drivers(driverId),
     FOREIGN KEY (constructorId) REFERENCES Constructors(constructorId),
@@ -153,24 +161,24 @@ CREATE TABLE SprintResults (
     raceId INT,
     driverId INT,
     constructorId INT,
-    statusId INT,
-    number INT,
+    sprintNumber INT,
     grid INT,
     position INT,
     positionOrder INT,
     points INT,
     laps INT,
-    time VARCHAR(30),
+    resultTime VARCHAR(30),
     milliseconds INT,
     fastestLap INT,
     fastestLapTime VARCHAR(20),
+    statusId INT,
     FOREIGN KEY (raceId) REFERENCES Races(raceId),
     FOREIGN KEY (driverId) REFERENCES Drivers(driverId),
     FOREIGN KEY (constructorId) REFERENCES Constructors(constructorId),
     FOREIGN KEY (statusId) REFERENCES Status(statusId)
 );
 
-CREATE TABLE Status (
+CREATE TABLE StatusCodes (
     statusId INT PRIMARY KEY,
     status VARCHAR(100)
 );
