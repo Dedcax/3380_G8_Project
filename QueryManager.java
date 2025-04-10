@@ -8,11 +8,11 @@ public class QueryManager {
 
     // Constructor - establish connection to database
     public QueryManager() {
-        try {
-            this.connection = DriverManager.getConnection(DatabaseLoader.DATABASEURL);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
+        // try {
+        // this.connection = DriverManager.getConnection(DatabaseLoader.DATABASEURL);
+        // } catch (SQLException e) {
+        // System.err.println(e.getMessage());
+        // }
 
     }
 

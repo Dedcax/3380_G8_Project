@@ -1,275 +1,100 @@
-
-import java.util.function.Function;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
 
 public class DatabaseLoader {
 
-    // class constant
-    private static final String PREFIX = "dataset/"; // create databse
-    private static final String OUTPUT_URL = "test.sql"; // create databse
+    private Connection connection;
 
-    /**
-     * Factory method for DatabaseLoader class. creates a new instance of the class,
-     * loading the dataset into the database
-     * 
-     * @return
-     */
-    public static void LoadData() {
-        System.out.println("Populating f1.sql...");
-        DatabaseLoader databaseLoader = new DatabaseLoader();
+    private static final String FILENAME = "f1.sql"; // create databse
 
-        databaseLoader.loadDataHelper();
-        System.out.println("Done populating f1.sql.");
+    public static void main(String[] args) {
+        DatabaseLoader dataLoader = new DatabaseLoader();
+        dataLoader.loadData();
     }
 
-    /**
-     * Helper function that loads all the tables from the dataset csv files
-     */
-    private void loadDataHelper() {
-        // this.loadData("circuits.csv", "Circuits", s -> this.translateCircuits(s));
-        // this.loadData("races.csv", "Races", s -> this.translateRaces(s));
-        // this.loadData("drivers.csv", "Drivers", s -> this.translateDrivers(s));
-        // this.loadData("constructors.csv", "Constructors", s ->
-        // this.translateConstructors(s));
-        // this.loadData("status.csv", "StatusCodes", s ->
-        // this.translateStatusCodes(s));
-        // this.loadData("constructor_results.csv", "ConstructorResults", s ->
-        // this.translateConstructorResults(s));
-        // this.loadData("constructor_standings.csv", "ConstructorStandings", s ->
-        // this.translateConstructorStandings(s));
-        // this.loadData("driver_standings.csv", "DriverStandings", s ->
-        // this.translateDriverStandings(s));
-        // this.loadData("lap_times.csv", "LapTimes", s -> this.translateLapTimes(s));
-        this.loadData("pit_stops.csv", "PitStops", s -> this.translatePitStops(s));
-        // this.loadData("qualifying.csv", "Qualifying", s ->
-        // this.translateQualifying(s));
-        // this.loadData("results.csv", "Results", s -> this.translateResults(s));
-        // this.loadData("sprint_results.csv", "SprintResults", s ->
-        // this.translateSprintResults(s));
+    public DatabaseLoader() {
+        Properties prop = new Properties();
+        String fileName = "auth.cfg";
+        try {
+            FileInputStream configFile = new FileInputStream(fileName);
+            prop.load(configFile);
+            configFile.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Could not find config file.");
+            System.exit(1);
+        } catch (IOException ex) {
+            System.out.println("Error reading config file.");
+            System.exit(1);
+        }
+        String username = (prop.getProperty("username"));
+        String password = (prop.getProperty("password"));
 
-    }
+        if (username == null || password == null) {
+            System.out.println("Username or password not provided.");
+            System.exit(1);
+        }
 
-    private String translateCircuits(String str) {
-        String[] temp = this.splitString(str);
-        temp[1] = addSingleQuote(temp[1]);
-        temp[2] = addSingleQuote(temp[2]);
-        temp[3] = addSingleQuote(temp[3]);
-        temp[4] = addSingleQuote(temp[4]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateRaces(String str) {
-        String[] temp = this.splitString(str);
-        temp[4] = addSingleQuote(temp[4]);
-        temp[5] = addSingleQuote(temp[5]);
-        temp[6] = addSingleQuote(temp[6]);
-        temp[7] = addSingleQuote(temp[7]);
-        temp[8] = addSingleQuote(temp[8]);
-        temp[9] = addSingleQuote(temp[9]);
-        temp[10] = addSingleQuote(temp[10]);
-        temp[11] = addSingleQuote(temp[11]);
-        temp[12] = addSingleQuote(temp[12]);
-        temp[13] = addSingleQuote(temp[13]);
-        temp[14] = addSingleQuote(temp[14]);
-        temp[15] = addSingleQuote(temp[15]);
-        temp[16] = addSingleQuote(temp[16]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateDrivers(String str) {
-        String[] temp = this.splitString(str);
-        temp[1] = addSingleQuote(temp[1]);
-        temp[3] = addSingleQuote(temp[3]);
-        temp[4] = addSingleQuote(temp[4]);
-        temp[5] = addSingleQuote(temp[5]);
-        temp[6] = addSingleQuote(temp[6]);
-        temp[7] = addSingleQuote(temp[7]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateConstructors(String str) {
-        String[] temp = this.splitString(str);
-        temp[1] = addSingleQuote(temp[1]);
-        temp[2] = addSingleQuote(temp[2]);
-        temp[3] = addSingleQuote(temp[3]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateStatusCodes(String str) {
-        String[] temp = this.splitString(str);
-        temp[1] = addSingleQuote(temp[1]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateConstructorResults(String str) {
-        return this.joinString(this.addNull(this.splitString(str)));
-    }
-
-    private String translateConstructorStandings(String str) {
-        return this.joinString(this.addNull(this.splitString(str)));
-    }
-
-    private String translateDriverStandings(String str) {
-        return this.joinString(this.addNull(this.splitString(str)));
-    }
-
-    private String translateLapTimes(String str) {
-        String[] temp = this.splitString(str);
-        temp[4] = addSingleQuote(temp[4]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translatePitStops(String str) {
-        String[] temp = this.splitString(str);
-        temp[4] = addSingleQuote(temp[4]);
-        temp[5] = addSingleQuote(temp[5]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateQualifying(String str) {
-        String[] temp = this.splitString(str);
-        temp[6] = addSingleQuote(formatTime(temp[6]));
-        temp[7] = addSingleQuote(formatTime(temp[7]));
-        temp[8] = addSingleQuote(formatTime(temp[8]));
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateResults(String str) {
-        String[] temp = this.splitString(str);
-        temp[10] = addSingleQuote(temp[10]);
-        temp[14] = addSingleQuote(temp[14]);
-        temp[15] = addSingleQuote(temp[15]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    private String translateSprintResults(String str) {
-        String[] temp = this.splitString(str);
-        temp[10] = addSingleQuote(temp[10]);
-        temp[13] = addSingleQuote(temp[13]);
-        return this.joinString(this.addNull(temp));
-    }
-
-    /**
-     * Generates insert statement for a table from a given CSV file.
-     * 
-     * @param fileName  name of csv file
-     * @param tableName name of table to insert data into
-     */
-    private void loadData(String fileName, String tableName, Function<String, String> translator) {
-
-        // I/O classes
-        BufferedReader reader;
-        BufferedWriter writer;
-
-        String stmt = "INSERT INTO %s VALUES (%s);"; // generic import statement
-        String line;
-        int numLines = 0;
+        String connectionUrl = "jdbc:sqlserver://uranium.cs.umanitoba.ca:1433;"
+                + "database=cs3380;"
+                + "user=" + username + ";"
+                + "password=" + password + ";"
+                + "encrypt=false;"
+                + "trustServerCertificate=false;"
+                + "loginTimeout=30;";
 
         try {
-            // open the file with the given fileName
-            reader = new BufferedReader(new FileReader(PREFIX + fileName));
+            this.connection = DriverManager.getConnection(connectionUrl);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
-            // open output stream
-            writer = new BufferedWriter(new FileWriter(new File(OUTPUT_URL)));
+    public void loadData() {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(new File(FILENAME)));
 
-            // skip the header line
-            reader.readLine();
+            String query = ""; // stores string for query
+            String line;
 
             // read all lines, inserting as the loop iterates
             while ((line = reader.readLine()) != null) {
+                // clean up
+                line = line.trim();
 
-                line = line.replaceAll("'", "''");
+                // add to string store
+                query += line;
 
-                // print out import statement
-                writer.write(String.format(stmt, tableName, translator.apply(line)));
-                writer.newLine();
-                // System.out.println(String.format(stmt, tableName, translator.apply(line)));
-                numLines++;
+                if (line.length() > 0 && line.charAt(line.length() - 1) == ';') {
+                    Statement statement = this.connection.createStatement();
+                    statement.executeQuery(query);
+                    System.out.println(query);
+                    query = "";
+                }
             }
 
-            // print out number of lines read
-            System.out.println("--Number of rows -> " + numLines + "\n");
-
-            // close scanner
+            // close stream
             reader.close();
-            writer.close();
+        } catch (NullPointerException e) {
+            System.err.println(e.getMessage());
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
 
-    }
-
-    /**
-     * returs the string in single quotes
-     * 
-     * @param str string to add quotes to
-     * @return 'str'
-     */
-    private String addSingleQuote(String str) {
-        String result = str.trim();
-
-        if (result.length() == 0 || result.equals("''")) {
-            result = null;
-        } else {
-            result = "'" + result + "'";
-        }
-
-        return String.format("%s", result);
-    }
-
-    /**
-     * join string[] with ', ' to form a more readable script
-     * 
-     * @param temp String[] to joiin
-     * @return string representation of string[]
-     */
-    private String joinString(String[] temp) {
-        return String.join(", ", temp);
-    }
-
-    /**
-     * splits a string into String[] on , delimeter
-     * 
-     * @param str string to split
-     * @return String[] of str
-     */
-    private String[] splitString(String str) {
-        return (str.trim()).split(",");
-    }
-
-    /**
-     * Formats time values that come in the format M:SS.TTT into MM:SS.TTT where M =
-     * minutes, S = seconds and T = milliseconds
-     * 
-     * @param time time to format
-     * @return format time if is invalid format, return time otherwise
-     */
-    private String formatTime(String time) {
-        int ind = time.indexOf(':'); // index of :
-        String min = time.substring(0, ind); // minutes of duration
-        String result;
-
-        // test to see if minutes < 10, if true add 0 ass prefix
-        try {
-            int num = Integer.parseInt(min);
-            String fmtNum = num < 10 ? "0" + num : "" + num;
-            result = fmtNum + time.substring(ind);
-        } catch (NumberFormatException e) {
-            result = "";
-        }
-
-        return result;
-    }
-
-    private String[] addNull(String[] test) {
-        for (int i = 0; i < test.length; i++) {
-            test[i] = test[i].trim().length() == 0 ? null : test[i].trim();
-        }
-        return test;
     }
 
 }

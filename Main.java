@@ -1,8 +1,12 @@
 
 public class Main {
     public static void main(String[] args) {
-        // load dataset into database
-        DatabaseLoader.LoadData();
+        // load DBDL queries into .sql file
+        // DatabaseLoadTool.LoadData();
+
+        // load .sql file into sql server
+        DatabaseLoader databaseLoader = new DatabaseLoader();
+        databaseLoader.loadData();
 
         // welcome message
         System.out.println("Welcome to our F1 Database CLI Program.");
