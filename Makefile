@@ -17,11 +17,8 @@ Main.class: InputHandler.class QueryManager.class DatabaseLoader.class
 	javac Main.java
 
 # executable
-Main: Main.class
+run: Main.class
 	java -cp ".;sqlite-jdbc-3.39.3.0.jar" Main
-
-# command to run the application
-run: Main
 
 # remove all .class & .db files from porject
 clean:
