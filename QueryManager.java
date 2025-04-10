@@ -199,7 +199,41 @@ public class QueryManager {
 
     // TODO: implement query
     private void races() {
-        System.out.println("races");
+        System.out.println("Getting races...");
+        String query = "SELECT raceId,raceYear,round,circuits.circuitName as circName,raceName,raceDate"
+                + " FROM races INNER JOIN circuits on (races.circuitId = circuits.circuitId);";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+            String fmt = "|%25s| %25s| %25s| %25s| %25s| %25s|";
+
+            String header = String.format(fmt, "id", "Name", "Year", "Round", "CircuitId", "Date");
+
+            printHorDivider(header);
+
+            System.out.println(header);
+
+            printHorDivider(header);
+
+            while (result.next()) {
+                String raceId = result.getString("raceId");
+                String raceYear = result.getString("raceYear");
+                String round = result.getString("round");
+                String circName = result.getString("circName");
+                String raceName = result.getString("raceName");
+                String raceDate = result.getString("raceDate");
+
+                System.out.println(
+                        String.format(fmt, raceId, raceName, raceYear, round, circName, raceDate));
+
+            }
+
+            printHorDivider(header);
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     // TODO: implement query
