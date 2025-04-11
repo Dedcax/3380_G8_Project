@@ -554,11 +554,11 @@ public class QueryManager {
         System.out.println("1.  drivers                           - Lists all drivers in the database.");
         System.out.println("2.  constructors                      - Lists all constructors (teams) in the database.");
         System.out.println("3.  races                             - Lists all races in the database.");
-        System.out.println("4.  team_drivers <constructorId>          - Lists all drivers for a given team.");
-        System.out.println("5.  driver_teams <driverId>        - Lists all teams a given driver has driven.");
+        System.out.println("4.  team_drivers <constructorId>      - Lists all drivers for a given team.");
+        System.out.println("5.  driver_teams <driverId>           - Lists all teams a given driver has driven.");
         System.out.println("6.  circuits                          - Lists all race circuits in the database.");
         System.out.println(
-                "7.  fastest_lap <driver_name>         - Displays the fastest lap times for a given driver.");
+                "7.  fastest_lap <driverId>            - Displays the fastest lap times for a given driver.");
         System.out.println(
                 "8.  top_drivers                       - Displays the top-performing drivers in the database.");
         System.out.println(
