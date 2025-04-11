@@ -14,11 +14,12 @@ public class DatabaseLoader {
 
     private Connection connection;
 
-    private static final String FILENAME = "f1.sql"; // create databse
+    public static final String FILENAME = "f1.sql"; // create databse
+    private static final String CLEAR = "clear.sql"; // create databse
 
     public static void main(String[] args) {
         DatabaseLoader dataLoader = new DatabaseLoader();
-        if (!dataLoader.loadData()) {
+        if (!dataLoader.loadData(FILENAME)) {
             System.out.println("Unable to load Database");
             System.exit(1);
         }
@@ -63,11 +64,14 @@ public class DatabaseLoader {
         }
     }
 
-    public boolean loadData() {
+    /*
+     * Loads the F1 dataset into the SQL server
+     */
+    public boolean loadData(String fileName) {
         System.out.println("Loading Database...");
         boolean result = false;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(new File(FILENAME)));
+            BufferedReader reader = new BufferedReader(new FileReader(new File(fileName)));
 
             String query = ""; // stores string for query
             String line;
@@ -91,7 +95,8 @@ public class DatabaseLoader {
                 if (line.length() > 0 && line.charAt(line.length() - 1) == ';') {
                     Statement statement = this.connection.createStatement();
                     statement.execute(query);
-                    // System.out.println(query);
+
+                    statement.close();
                     query = "";
                 }
             }
@@ -115,4 +120,10 @@ public class DatabaseLoader {
         return result;
     }
 
+    /**
+     * Clears the data stored in the database
+     */
+    public void clearData() {
+        this.loadData(CLEAR);
+    }
 }

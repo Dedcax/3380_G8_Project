@@ -63,6 +63,21 @@ make run
 make run_aviary
 ```
 
+### 4. Clean up your working environment
+
+
+```bash
+make clean
+```
+
+
+---
+
+## Common Issues.
+
+Although we tried our best to have this databse working to the full specification of the project. We were unable to get our code to drop all tables programatically. Repopulating or loading into an blank environment works as is expected.
+
+To clear the database please follow instructions posted on the Project page relating to using SQL server with VSCode. Please, Manually highlight lines 1 to 20 in your sql client of choice and manually run those. We do not understand why this behaves like this. we took care in the ordering of calls.
 
 
 ---

@@ -105,6 +105,12 @@ public class QueryManager {
         } else if (command.equals("search_driver")) { // search_driver command
             this.searchDriver(variable);
 
+        } else if (command.equals("DELETE_ALL")) { // clear the database
+            (new DatabaseLoader()).clearData();
+
+        } else if (command.equals("LOAD")) { // search_driver command
+            (new DatabaseLoader()).loadData(DatabaseLoader.FILENAME);
+
         } else { // invalid command
             System.out.println("Please enter valid command");
         }
@@ -563,6 +569,8 @@ public class QueryManager {
                 "8.  top_drivers                       - Displays the top-performing drivers in the database.");
         System.out.println(
                 "9.  search_driver <partial_name>      - Searches for a driver by a partial name.");
+        System.out.println("10.  DELETE_ALL                       - delete all the data from the database.");
+        System.out.println("11.  LOAD                             - repopulate the database.");
         System.out.println(
                 "\nNote: commnands are in the format - COMMAND <VARIABLE>. Variables are only required for selected commands, see above.\n");
     }

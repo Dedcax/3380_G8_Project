@@ -32,6 +32,11 @@ run: Main.class
 run_aviary: Main.class
 	java -cp .:mssql-jdbc-8.2.2.jre8.jar Main
 
+# Script for generating insert statements
+script: 
+	javac DatabaseLoadTool.java
+	java  DatabaseLoadTool
+
 # remove all .class & .db files from porject
 clean:
 	rm *.class
