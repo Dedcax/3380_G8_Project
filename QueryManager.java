@@ -259,7 +259,7 @@ public class QueryManager {
             try {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, Integer.parseInt(constructorId));
-                ResultSet result = statement.executeQuery(query);
+                ResultSet result = statement.executeQuery();
 
                 String fmt = "|%25s| %25s|";
 
@@ -310,7 +310,7 @@ public class QueryManager {
             try {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, Integer.parseInt(driverId));
-                ResultSet result = statement.executeQuery(query);
+                ResultSet result = statement.executeQuery();
 
                 String fmt = "|%25s|";
 
@@ -348,7 +348,7 @@ public class QueryManager {
     private void circuits() {
         System.out.println("Getting the most used circuits...");
 
-        String query = "SELECT circuitName, circuitLocation, circuits.circuitId, count(races.circuitId) as times_raced"
+        String query = "SELECT circuitName, circuitLocation, circuits.circuitId as circId, count(races.circuitId) as times_raced"
                 + " FROM circuits LEFT JOIN races"
                 + " ON (Circuits.circuitId = races.circuitId)"
                 + " WHERE circuits.circuitId=races.circuitId"
@@ -359,7 +359,7 @@ public class QueryManager {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
 
-            String fmt = "| %5s| %25s| %25s| %6s|";
+            String fmt = "| %5s| %40s| %25s| %10s|";
 
             String header = String.format(fmt, "Id", "Name", "Location", "Num. Used");
 
@@ -372,7 +372,7 @@ public class QueryManager {
             while (result.next()) {
                 String circuitName = result.getString("circuitName");
                 String circuitLocation = result.getString("circuitLocation");
-                String circId = result.getString("circuits.circuitId");
+                String circId = result.getString("circId");
                 String teamRaced = result.getString("times_raced");
 
                 System.out.println(
@@ -396,7 +396,7 @@ public class QueryManager {
         if (!driverId.equals("")) {
             System.out.println("Getting the fastest lap for driverId:" + driverId);
 
-            String query = "SELECT DISTINCT circuits.circuitName, min(fastestLapTime) as fastest"
+            String query = "SELECT DISTINCT circuits.circuitName as cirName, min(fastestLapTime) as fastest"
                     + " FROM results"
                     + " INNER JOIN races ON (Results.raceId = Races.raceId)"
                     + " INNER JOIN circuits ON (Races.circuitId = Circuits.circuitId)"
@@ -406,9 +406,9 @@ public class QueryManager {
             try {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setInt(1, Integer.parseInt(driverId));
-                ResultSet result = statement.executeQuery(query);
+                ResultSet result = statement.executeQuery();
 
-                String fmt = "| %25s| %10s|";
+                String fmt = "| %45s| %10s|";
 
                 String header = String.format(fmt, "Name", "Fastest");
 
@@ -419,7 +419,7 @@ public class QueryManager {
                 printHorDivider(header);
 
                 while (result.next()) {
-                    String name = result.getString(" circuits.circuitName");
+                    String name = result.getString("cirName");
                     String fastest = result.getString("fastest");
 
                     System.out.println(
@@ -445,7 +445,7 @@ public class QueryManager {
     private void topDrivers() {
         System.out.println("Getting Drivers with the most races...");
 
-        String query = "SELECT TOP 10 forename,surname, drivers.driverId, count(results.driverId) as num_races"
+        String query = "SELECT TOP 10 drivers.forename as forename,drivers.surname as surname, drivers.driverId as dId, count(results.driverId) as num_races"
                 + " FROM results INNER JOIN drivers"
                 + " ON (Results.driverId = Drivers.driverId)"
                 + " WHERE drivers.driverId=results.driverId"
@@ -467,9 +467,9 @@ public class QueryManager {
             printHorDivider(header);
 
             while (result.next()) {
-                String forename = result.getString(" forename");
+                String forename = result.getString("forename");
                 String surname = result.getString("surname");
-                String driverId = result.getString("drivers.driverId");
+                String driverId = result.getString("dId");
                 String numRaces = result.getString("num_races");
 
                 System.out.println(
@@ -497,13 +497,13 @@ public class QueryManager {
             System.out.println("Getting Drivers with the matching string sequence...");
 
             String query = "SELECT * FROM drivers"
-                    + " WHERE LOWER(forename) LIKE ? OR  LOWER(surname) LIKE ?;";
+                    + " WHERE LOWER(forename) LIKE ? OR LOWER(surname) LIKE ?;";
 
             try {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, "'%" + driverName + "%'");
                 statement.setString(2, "'%" + driverName + "%'");
-                ResultSet result = statement.executeQuery(query);
+                ResultSet result = statement.executeQuery();
 
                 String fmt = "| %5s| %25s| %25s| %15s| %25s| %5s| %5s| %25s|";
 
