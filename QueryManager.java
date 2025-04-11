@@ -204,15 +204,15 @@ public class QueryManager {
      */
     private void races() {
         System.out.println("Getting races...");
-        String query = "SELECT raceId,raceYear,round,circuitsId,circuits.circuitName as circName,raceName,raceDate"
+        String query = "SELECT raceId,raceYear,round,circuits.circuitId as cirId,circuits.circuitName as circName,raceName,raceDate"
                 + " FROM races INNER JOIN circuits on (races.circuitId = circuits.circuitId);";
 
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            String fmt = "|%5s| %25s| %25s| %25s| %7s| %25s| %25s|";
+            String fmt = "|%5s| %35s| %6s| %4s| %7s| %40s| %12s|";
 
-            String header = String.format(fmt, "id", "Name", "Year", "Round", "cirId", "CircuitId", "Date");
+            String header = String.format(fmt, "id", "Name", "Year", "Round", "cirId", "Circuit Name", "Date");
 
             printHorDivider(header);
 
@@ -227,7 +227,7 @@ public class QueryManager {
                 String circName = result.getString("circName");
                 String raceName = result.getString("raceName");
                 String raceDate = result.getString("raceDate");
-                String circuitId = result.getString("circuitId");
+                String circuitId = result.getString("cirId");
 
                 System.out.println(
                         String.format(fmt, raceId, raceName, raceYear, round, circuitId, circName, raceDate));
