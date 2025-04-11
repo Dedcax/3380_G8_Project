@@ -15,6 +15,9 @@ DatabaseLoader.class:
 # initilise the databse
 initdb: DatabaseLoader.class
 	java -cp ".;mssql-jdbc-8.2.2.jre8.jar" DatabaseLoader
+# linux command
+initdb_aviary: DatabaseLoader.class
+	java -cp .:mssql-jdbc-8.2.2.jre8.jar DatabaseLoader
 
 # main file loop
 Main.class: InputHandler.class QueryManager.class DatabaseLoader.class
@@ -23,6 +26,9 @@ Main.class: InputHandler.class QueryManager.class DatabaseLoader.class
 # executable
 run: Main.class
 	java -cp ".;mssql-jdbc-8.2.2.jre8.jar" Main
+# linux executable
+run_aviary: Main.class
+	java -cp .:mssql-jdbc-8.2.2.jre8.jar Main
 
 # remove all .class & .db files from porject
 clean:
