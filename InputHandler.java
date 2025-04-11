@@ -28,7 +28,9 @@ public class InputHandler {
 
         // read the next line and split it on the spaces
         if (this.scanner.hasNextLine()) {
-            String[] temp = (this.scanner.nextLine().trim()).split(" ");
+
+            // protects against sql injection - '-' and ';' are auto-replaced with ""
+            String[] temp = (this.scanner.nextLine().trim()).replace(";", "").replace("-", "").split(" ");
             result[COMMAND] = temp[COMMAND];
             result[VARIABLE] = temp.length == 2 ? temp[VARIABLE] : "";
         }
