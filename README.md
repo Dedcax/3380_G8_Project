@@ -4,16 +4,22 @@ This project demonstrates how to connect to a SQL Server database using Java JDB
 
 [Data source](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020?select=lap_times.csv)
 
+
 ---	
+
 
 ## Prerequisites
 - Java 8 or higher
 - SQL Server (any version)
 - JDBC Driver for SQL Server (Microsoft JDBC Driver)
 
+
 ---
 
+
+
 ## Setup Instructions
+
 
 ### 1. Load the Database (from CSV files into the Uranium SQL Server)
 NOTE: The database is already pre-loaded from the F1 dataset
@@ -28,6 +34,8 @@ make initdb
 make initdb_aviary
 ```
 
+
+
 ### 2. Compile the program
 NOTE: This step can be skipped
 
@@ -41,6 +49,8 @@ OR
 make build
 ```
 
+
+
 ### 3. Run the Command Line Interface
 
 #### In the Windows environment
@@ -53,9 +63,14 @@ make run
 make run_aviary
 ```
 
+
+
 ---
 
+
+
 ## Program Instructions
+
 
 ```
 This Program contains information about F1 World Championship from 1950 - 2024
@@ -74,9 +89,14 @@ The following commands are available in this programm:
 Note: commnands are in the format - COMMAND <VARIABLE>. Variables are only required for selected commands, see above.
 ```
 
+
+
 ---
 
+
+
 ## Project Structure
+
 
 ```
 COMP_3380/
