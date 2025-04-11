@@ -15,6 +15,7 @@ DatabaseLoader.class:
 # initilise the databse
 initdb: DatabaseLoader.class
 	java -cp ".;mssql-jdbc-8.2.2.jre8.jar" DatabaseLoader
+
 # linux command
 initdb_aviary: DatabaseLoader.class
 	java -cp .:mssql-jdbc-8.2.2.jre8.jar DatabaseLoader
@@ -26,6 +27,7 @@ Main.class: InputHandler.class QueryManager.class DatabaseLoader.class
 # executable
 run: Main.class
 	java -cp ".;mssql-jdbc-8.2.2.jre8.jar" Main
+	
 # linux executable
 run_aviary: Main.class
 	java -cp .:mssql-jdbc-8.2.2.jre8.jar Main
