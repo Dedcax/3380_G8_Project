@@ -13,6 +13,9 @@ This project demonstrates how to connect to a SQL Server database using Java JDB
 - SQL Server (any version)
 - JDBC Driver for SQL Server (Microsoft JDBC Driver)
 
+- Uranium is connected to:
+- umnetID - kolynchc
+- password - 7916596
 
 ---
 
