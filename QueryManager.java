@@ -501,8 +501,8 @@ public class QueryManager {
 
             try {
                 PreparedStatement statement = connection.prepareStatement(query);
-                statement.setString(1, "'%" + driverName + "%'");
-                statement.setString(2, "'%" + driverName + "%'");
+                statement.setString(1, "%" + driverName + "%");
+                statement.setString(2, "%" + driverName + "%");
                 ResultSet result = statement.executeQuery();
 
                 String fmt = "| %5s| %25s| %25s| %15s| %25s| %5s| %5s| %25s|";
