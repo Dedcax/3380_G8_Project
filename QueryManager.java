@@ -200,7 +200,7 @@ public class QueryManager {
     }
 
     /**
-     * Get a list of all the race data
+     * Print a list of all the race data
      */
     private void races() {
         System.out.println("Getting races...");
@@ -242,7 +242,7 @@ public class QueryManager {
     }
 
     /**
-     * Get drivers for a certain team with contructorId
+     * Print drivers for a certain team with contructorId
      * 
      * @param constructorId constructor to get drivers for
      */
@@ -294,7 +294,7 @@ public class QueryManager {
     }
 
     /**
-     * Get a list of constructors a driver has driven for
+     * Print a list of constructors a driver has driven for
      * 
      * @param driverId for driver
      */
@@ -384,15 +384,56 @@ public class QueryManager {
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println(e.getMessage());
         }
     }
 
-    // TODO: implement query
-    private void fastestLap(String driverName) {
-        if (!driverName.equals("")) {
-            System.out.println("fastest_lap");
+    /**
+     * Print the fastest lap of a driver with driverId
+     * 
+     * @param driverId id of the driver to search for fastest lap
+     */
+    private void fastestLap(String driverId) {
+        if (!driverId.equals("")) {
+            System.out.println("Getting the fastest lap for driverId:" + driverId);
+
+            String query = "SELECT DISTINCT circuits.circuitName, min(fastestLapTime) as fastest"
+                    + " FROM results"
+                    + " INNER JOIN races ON (Results.raceId = Races.raceId)"
+                    + " INNER JOIN circuits ON (Races.circuitId = Circuits.circuitId)"
+                    + " GROUP BY Circuits.circuitId, driverId, circuitName"
+                    + " HAVING driverId = ?;";
+
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, Integer.parseInt(driverId));
+                ResultSet result = statement.executeQuery(query);
+
+                String fmt = "| %25s| %10s|";
+
+                String header = String.format(fmt, "Name", "Fastest");
+
+                printHorDivider(header);
+
+                System.out.println(header);
+
+                printHorDivider(header);
+
+                while (result.next()) {
+                    String name = result.getString(" circuits.circuitName");
+                    String fastest = result.getString("fastest");
+
+                    System.out.println(
+                            String.format(fmt, name, fastest));
+
+                }
+
+                printHorDivider(header);
+
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
         } else {
             System.out.println("Enter a valid driver name (fastest_lap <driverName>)");
         }
