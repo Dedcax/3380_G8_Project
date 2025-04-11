@@ -439,15 +439,107 @@ public class QueryManager {
         }
     }
 
-    // TODO: implement query
+    /**
+     * Print top 10 drivers who have driven in the most races
+     */
     private void topDrivers() {
-        System.out.println("top_drivers");
+        System.out.println("Getting Drivers with the most races...");
+
+        String query = "SELECT TOP 10 forename,surname, drivers.driverId, count(results.driverId) as num_races"
+                + " FROM results INNER JOIN drivers"
+                + " ON (Results.driverId = Drivers.driverId)"
+                + " WHERE drivers.driverId=results.driverId"
+                + " GROUP BY drivers.driverRef, forename, surname, Drivers.driverId"
+                + " ORDER BY count(results.driverId) DESC;";
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+
+            String fmt = "| %5s| %25s| %25s| %10s|";
+
+            String header = String.format(fmt, "Id", "First Name", "Last Name", "Num. Races");
+
+            printHorDivider(header);
+
+            System.out.println(header);
+
+            printHorDivider(header);
+
+            while (result.next()) {
+                String forename = result.getString(" forename");
+                String surname = result.getString("surname");
+                String driverId = result.getString("drivers.driverId");
+                String numRaces = result.getString("num_races");
+
+                System.out.println(
+                        String.format(fmt, driverId, forename, surname, numRaces));
+
+            }
+
+            printHorDivider(header);
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
-    // TODO: implement query
+    /**
+     * Print drivers with name that resemble supplied name, ed returns edward and
+     * ked for eg.
+     * 
+     * @param driverName
+     */
     private void searchDriver(String driverName) {
         if (!driverName.equals("")) {
-            System.out.println("search_driver");
+            driverName = driverName.toLowerCase();
+
+            System.out.println("Getting Drivers with the matching string sequence...");
+
+            String query = "SELECT * FROM drivers"
+                    + " WHERE LOWER(forename) LIKE ? OR  LOWER(surname) LIKE ?;";
+
+            try {
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setString(1, "'%" + driverName + "%'");
+                statement.setString(2, "'%" + driverName + "%'");
+                ResultSet result = statement.executeQuery(query);
+
+                String fmt = "| %5s| %25s| %25s| %15s| %25s| %5s| %5s| %25s|";
+
+                String header = String.format(fmt, "Id", "First Name", "Last Name", "DOB", "Nickname",
+                        "Number",
+                        "Code", "Nationality");
+
+                printHorDivider(header);
+
+                System.out.println(header);
+
+                printHorDivider(header);
+
+                while (result.next()) {
+                    String driverId = result.getString("driverId");
+                    String driverRef = result.getString("driverRef");
+                    String driverNumber = result.getString("driverNumber");
+                    String code = result.getString("code");
+                    String forename = result.getString("forename");
+                    String surname = result.getString("surname");
+                    String dob = result.getString("dob");
+                    String nationality = result.getString("nationality");
+
+                    System.out.println(
+                            String.format(fmt, driverId, forename, surname, dob, driverRef, driverNumber, code,
+                                    nationality));
+
+                }
+
+                printHorDivider(header);
+
+            } catch (SQLException e) {
+                System.err.println(e.getMessage());
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
         } else {
             System.out.println("Enter a valid driver name (search_driver <driverName>)");
         }
